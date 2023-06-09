@@ -1,0 +1,109 @@
+#text_box {
+    position: fixed;
+    height: 8vw;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    margin: 0;
+    z-index: 4;
+    padding: 0;
+    background: none;
+}
+#text_box_back_ground_div {
+    position: fixed;
+    height: 8vw;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    margin: 0;
+    z-index: 2;
+    padding: 0;
+    background: black;
+}
+#text_box video {
+    height: 8vw;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    z-index: 4;
+}
+#main_screen {
+    position: fixed;
+    height: 56.25vw;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    background: black;
+    mix-blend-mode: screen;
+}
+#main_screen video {
+    height: 56.25vw;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    mix-blend-mode: screen;
+    z-index: 3;
+}
+#main_effect {
+    position: fixed;
+    height: 56.25vw;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
+    mix-blend-mode: screen;
+}
+#main_effect video {
+    height: 56.25vw;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    z-index: 5;
+    mix-blend-mode: screen;
+}
+#back_ground_picture_div {
+    position: fixed;
+    height: 56.25vw;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
+    mix-blend-mode: screen;
+}
+#back_ground_picture_div img {
+    height: 56.25vw;
+    width: 100vw;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    z-index: 1;
+}
+#logger_div {
+    height: 16px;
+    width: 100vw;
+    margin: 0;
+    padding: 2px;
+    position: fixed;
+    z-index: 5;
+    background: #1c1c1c;
+    bottom: 0;
+    left: 0;
+}
+#logger_div p {
+    font-size: 14px;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+}
+
