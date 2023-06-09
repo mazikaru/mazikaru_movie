@@ -567,6 +567,9 @@ let currentMusicClassId = -1;
 /** @type {int} */
 let lastMusicClassId = -1;
 
+/** @type {int} */
+let currentAllClassId = -1;
+
 /** @return {int} */
 function getAvailableTextBoxClassId() {
     return ++lastTextBoxClassId;
@@ -592,46 +595,9 @@ function getAvailableMusicClassId() {
     return ++lastMusicClassId;
 }
 
-/**
- * @param {int} id
- * @return {TextBoxMovie|TextBoxVoid}
- */
-function getTextBoxWrapperById(id) {
-    return TEXT_BOXES[id];
-}
-
-/**
- * @param {int} id
- * @return {MainScreenMovie|MainScreenVoid}
- */
-function getMainScreenWrapperById(id) {
-    return MAIN_SCREENS[id];
-}
-
-/**
- * @param {int} id
- * @return {MainEffectMovie|MainEffectVoid}
- */
-function getMainEffectWrapperById(id) {
-    console.log(id)
-    return MAIN_EFFECTS[id];
-}
-
-/**
- * @param {int} id
- * @return {BackgroundPicture|BackgroundPictureVoid}
- */
-function getPictureWrapperById(id) {
-    console.log(id)
-    return PICTURES[id];
-}
-
-/**
- * @param {int} id
- * @return {BackgroundMusic|BackgroundMusicVoid}
- */
-function getMusicWrapperById(id) {
-    return MUSICS[id];
+/** @return {TextBoxMovie|TextBoxVoid|MainScreenMovie|MainScreenVoid|MainEffectMovie|MainEffectVoid|BackgroundPicture|BackgroundPictureVoid|BackgroundMusic|BackgroundMusicVoid} */
+function getElementWrapperById(id) {
+    return EFFECTS[id];
 }
 
 /**
@@ -648,95 +614,54 @@ function createElement(tag, id) {
 /**
  * @param {boolean} behind 一つ後ろに戻るかどうか
  */
-function nextTextBox(behind = false) {
-    if (behind && currentTextBoxClassId <= 0) {
+function next(behind = false) {
+    if (behind && currentAllClassId <= 0) {
         return;
     }
+    const wrapper = getElementWrapperById(currentAllClassId);
     if (!behind) {
-        ++currentTextBoxClassId;
+        switch (true) {
+            case wrapper instanceof TextBoxMovie || wrapper instanceof TextBoxVoid:
+                ++currentTextBoxClassId;
+                break;
+            case wrapper instanceof MainEffectMovie || wrapper instanceof MainEffectVoid:
+                ++currentMainEffectClassId;
+                break;
+            case wrapper instanceof MainScreenMovie || wrapper instanceof MainScreenVoid:
+                ++currentMainScreenClassId;
+                break;
+            case wrapper instanceof BackgroundPicture || wrapper instanceof BackgroundPictureVoid:
+                ++currentPictureClassId;
+                break;
+            case wrapper instanceof BackgroundMusic || wrapper instanceof BackgroundMusicVoid:
+                ++currentMusicClassId;
+                break;
+        }
+        ++currentAllClassId;
     } else {
-        --currentTextBoxClassId;
+        switch (true) {
+            case wrapper instanceof TextBoxMovie || wrapper instanceof TextBoxVoid:
+                --currentTextBoxClassId;
+                break;
+            case wrapper instanceof MainEffectMovie || wrapper instanceof MainEffectVoid:
+                --currentMainEffectClassId;
+                break;
+            case wrapper instanceof MainScreenMovie || wrapper instanceof MainScreenVoid:
+                --currentMainScreenClassId;
+                break;
+            case wrapper instanceof BackgroundPicture || wrapper instanceof BackgroundPictureVoid:
+                --currentPictureClassId;
+                break;
+            case wrapper instanceof BackgroundMusic || wrapper instanceof BackgroundMusicVoid:
+                --currentMusicClassId;
+                break;
+        }
+        --currentAllClassId;
     }
-    if (currentTextBoxClassId === TEXT_BOXES.length) {
+    if (currentAllClassId === EFFECTS.length) {
         currentTextBoxClassId = 0;
     }
-    getTextBoxWrapperById(currentTextBoxClassId).play();
-    onChangeResource();
-}
-
-/**
- * @param {boolean} behind 一つ後ろに戻るかどうか
- */
-function nextMainScreen(behind = false) {
-    if (behind && currentMainScreenClassId <= 0) {
-        return;
-    }
-    if (!behind) {
-        ++currentMainScreenClassId;
-    } else {
-        --currentMainScreenClassId;
-    }
-    if (currentMainScreenClassId === MAIN_SCREENS.length) {
-        currentMainScreenClassId = 0;
-    }
-    getMainScreenWrapperById(currentMainScreenClassId).play();
-    onChangeResource();
-}
-
-/**
- * @param {boolean} behind 一つ後ろに戻るかどうか
- */
-function nextMainEffect(behind = false) {
-    if (behind && currentMainEffectClassId <= 0) {
-        return;
-    }
-    if (!behind) {
-        ++currentMainEffectClassId;
-    } else {
-        --currentMainEffectClassId;
-    }
-    if (currentMainEffectClassId === MAIN_EFFECTS.length) {
-        currentMainEffectClassId = 0;
-    }
-    getMainEffectWrapperById(currentMainEffectClassId).play();
-    onChangeResource();
-}
-
-/**
- * @param {boolean} behind 一つ後ろに戻るかどうか
- */
-function nextPicture(behind = false) {
-    if (behind && currentPictureClassId <= 0) {
-        return;
-    }
-    if (!behind) {
-        ++currentPictureClassId;
-    } else {
-        --currentPictureClassId;
-    }
-    if (currentPictureClassId === PICTURES.length) {
-        currentPictureClassId = 0;
-    }
-    getPictureWrapperById(currentPictureClassId).play();
-    onChangeResource()
-}
-
-/**
- * @param {boolean} behind 一つ後ろに戻るかどうか
- */
-function nextMusic(behind = false) {
-    if (behind && currentMusicClassId <= 0) {
-        return;
-    }
-    if (!behind) {
-        ++currentMusicClassId;
-    } else {
-        --currentMusicClassId;
-    }
-    if (currentMusicClassId === MUSICS.length) {
-        currentMusicClassId = 0;
-    }
-    getMusicWrapperById(currentMusicClassId).play();
+    wrapper.play();
     onChangeResource();
 }
 
@@ -749,24 +674,16 @@ function onChangeResource() {
         "<span style='color: #9a0000'>音響(T): <span style='color: #ff0000'>" + currentMusicClassId.toString();
 }
 
-/** @type {(TextBoxMovie|TextBoxVoid)[]} */
-let TEXT_BOXES = [];
-
-/** @type {(MainScreenMovie|MainScreenVoid)[]} */
-let MAIN_SCREENS = [];
-
-/** @type {(MainEffectMovie|MainEffectVoid)[]} */
-let MAIN_EFFECTS = [];
-
-/** @type {(BackgroundPicture|BackgroundPictureVoid)[]} */
-let PICTURES = [];
-
-/** @type {(BackgroundMusic|BackgroundMusicVoid)[]} */
-let MUSICS = [];
+/** @type {(TextBoxMovie|TextBoxVoid|MainScreenMovie|MainScreenVoid|MainEffectMovie|MainEffectVoid|BackgroundPicture|BackgroundPictureVoid|BackgroundMusic|BackgroundMusicVoid)[]} */
+let EFFECTS = [];
 
 window.addEventListener("load", function () {
-    TEXT_BOXES = [
+    EFFECTS = [
         new TextBoxVoid(ANIM_NONE),
+        new MainEffectVoid(ANIM_NONE),
+        new MainScreenVoid(ANIM_NONE),
+        new BackgroundPictureVoid(ANIM_NONE),
+        new BackgroundMusicVoid(ANIM_NONE),
         new TextBoxMovie("まじくまじから", ANIM_FADE),
         new TextBoxVoid(ANIM_FADE),
         new TextBoxMovie("ずざら", ANIM_FADE),
@@ -803,95 +720,17 @@ window.addEventListener("load", function () {
         new TextBoxMovie("けむけむ", ANIM_FADE),
         new TextBoxVoid(ANIM_FADE),
     ];
-    MAIN_SCREENS = [
-        new MainScreenVoid(ANIM_NONE),
-        new MainScreenMovie("light_leak_half", ANIM_FADE),
-        new MainScreenVoid(ANIM_NONE),
-        new MainScreenMovie("light_leak", ANIM_FADE),
-        new MainScreenVoid(ANIM_FADE),
-        new MainScreenMovie("konan", ANIM_NONE),
-        new MainScreenVoid(ANIM_FADE),
-        new MainScreenMovie("light_leak_half", ANIM_FADE),
-        new MainScreenMovie("light_leak", ANIM_FADE),
-        new MainScreenVoid(ANIM_NONE),
-        new MainScreenMovie("warp_to", ANIM_FADE),
-        new MainScreenVoid(ANIM_NONE),
-        new MainScreenMovie("light_leak_half", ANIM_FADE),
-        new MainScreenVoid(ANIM_NONE),
-        new MainScreenMovie("light_leak_half", ANIM_FADE),
-        new MainScreenVoid(ANIM_NONE),
-        new MainScreenMovie("light_leak", ANIM_FADE),
-        new MainScreenVoid(ANIM_FADE),
-        new MainScreenMovie("warp_back", ANIM_FADE),
-        new MainScreenVoid(ANIM_NONE)
-    ];
-    MAIN_EFFECTS = [
-        new MainEffectVoid(ANIM_FADE),
-        new MainEffectMovie("hiraganaga_nuketeiku", ANIM_FADE),
-        new MainEffectVoid(ANIM_FADE),
-        new MainEffectMovie("hikari_ue", ANIM_FADE),
-        new MainEffectVoid(ANIM_FADE),
-        new MainEffectMovie("mazikaru_kougeki", ANIM_FADE),
-        new MainEffectMovie("hiraganaga_nuketeiku", ANIM_FADE),
-        new MainEffectVoid(ANIM_FADE),
-        new MainEffectMovie("mazikaru_kougeki", ANIM_FADE),
-        new MainEffectMovie("mazikaru_kougeki", ANIM_FADE),
-        new MainEffectVoid(ANIM_NONE),
-    ];
-    PICTURES = [
-        new BackgroundPictureVoid(ANIM_NONE),
-        new BackgroundPicture("kousya_heiwa_half.jpg", ANIM_FADE),
-        new BackgroundPicture("kousya_heiwa.jpg", ANIM_NONE),
-        new BackgroundPictureVoid(ANIM_FADE),
-        new BackgroundPicture("kyoushitsu_heiwa.jpg", ANIM_FADE),
-        new BackgroundPictureVoid(ANIM_FADE),
-    ]
-    MUSICS = [
-        new BackgroundMusicVoid(ANIM_NONE),
-        new BackgroundMusic("fight-again-cut", ANIM_NONE),
-        new BackgroundMusicVoid(ANIM_FADE)
-    ];
     window.addEventListener("keydown", function(event) {
         switch (event.key) {
-            case "a":
+            case " ":
+            case "ArrowRight":
+            case "Enter":
                 event.preventDefault();
-                nextTextBox(true);
+                next();
                 break;
-            case "q":
+            case "ArrowLeft":
                 event.preventDefault();
-                nextTextBox();
-                break;
-            case "s":
-                event.preventDefault();
-                nextMainEffect(true);
-                break;
-            case "w":
-                event.preventDefault();
-                nextMainEffect();
-                break;
-            case "d":
-                event.preventDefault();
-                nextMainScreen(true);
-                break;
-            case "e":
-                event.preventDefault();
-                nextMainScreen();
-                break;
-            case "f":
-                event.preventDefault();
-                nextPicture(true);
-                break;
-            case "r":
-                event.preventDefault();
-                nextPicture();
-                break;
-            case "g":
-                event.preventDefault();
-                nextMusic(true);
-                break;
-            case "t":
-                event.preventDefault();
-                nextMusic();
+                next(true);
                 break;
             case "z":
                 event.preventDefault();
@@ -908,5 +747,13 @@ window.addEventListener("load", function () {
                 document.getElementById("logger_div").style.opacity = Number(document.getElementById("logger_div").style.opacity) === 1 ? 0 : 1;
         }
     });
+    window.addEventListener("click", function(event) {
+        event.preventDefault();
+        next(false);
+    })
+    document.body.addEventListener("contextmenu", function(event) {
+        event.preventDefault();
+        next();
+    })
 });
 
