@@ -4,7 +4,19 @@ const ANIM_FADE = 1;
 
 const TICK_ANIM_FADE = 10;
 
-class TextBoxMovie {
+const SHOW_NORMAL = 0;
+const SHOW_SCREEN = 1;
+
+class MazikaruEffect {
+
+    /** @public */
+    play() {
+        console.error("[Warning] Method 'play()' must be overridden by a children");
+    }
+
+}
+
+class TextBoxMovie extends MazikaruEffect {
 
     /** @type {string} */
     path;
@@ -25,7 +37,8 @@ class TextBoxMovie {
      * @param {int} anim
      * @public
      */
-    constructor(path, anim) {
+    constructor(path, anim = ANIM_FADE) {
+        super();
         this.path = "resource/text/" + path + ".mp4";
         this.anim = anim;
         this.videoElem = document.getElementById("text_box_mov");
@@ -62,7 +75,7 @@ class TextBoxMovie {
 
 }
 
-class TextBoxVoid {
+class TextBoxVoid extends MazikaruEffect {
 
     /** @type {int} */
     anim;
@@ -80,7 +93,8 @@ class TextBoxVoid {
      * @param {int} anim
      * @public
      */
-    constructor(anim) {
+    constructor(anim = ANIM_FADE) {
+        super();
         this.anim = anim;
         this.videoElem = document.getElementById("text_box_mov");
         this.classId = getAvailableTextBoxClassId();
@@ -113,7 +127,7 @@ class TextBoxVoid {
 
 }
 
-class MainScreenMovie {
+class MainScreenMovie extends MazikaruEffect {
 
     /** @type {string} */
     path;
@@ -134,7 +148,8 @@ class MainScreenMovie {
      * @param {int} anim
      * @public
      */
-    constructor(path, anim) {
+    constructor(path, anim = ANIM_FADE) {
+        super();
         this.path = "resource/main_screen/" + path + ".mp4";
         this.anim = anim;
         this.videoElem = document.getElementById("main_screen_mov");
@@ -171,7 +186,7 @@ class MainScreenMovie {
 
 }
 
-class MainScreenVoid {
+class MainScreenVoid extends MazikaruEffect {
 
     /** @type {int} */
     anim;
@@ -185,18 +200,34 @@ class MainScreenVoid {
     /** @type {int} */
     currentTick;
 
+    /** @type {int} */
+    show;
+
     /**
      * @param {int} anim
+     * @param {int} show
      * @public
      */
-    constructor(anim) {
+    constructor(anim = ANIM_FADE, show = SHOW_SCREEN) {
+        super();
         this.anim = anim;
+        this.show = show;
         this.videoElem = document.getElementById("main_screen_mov");
         this.classId = getAvailableMainScreenClassId();
     }
 
     /** @public */
     play() {
+        switch (this.show) {
+            case SHOW_NORMAL:
+                this.videoElem.style.mixBlendMode = "normal";
+                break;
+            case SHOW_SCREEN:
+                this.videoElem.style.mixBlendMode = "screen";
+                break;
+            default:
+                this.videoElem.style.mixBlendMode = "normal";
+        }
         console.log("現在 " + currentMainScreenClassId + " 番目の映像を表示中。これは、空欄の映像です。");
         switch (this.anim) {
             case ANIM_NONE:
@@ -222,7 +253,7 @@ class MainScreenVoid {
 
 }
 
-class MainEffectMovie {
+class MainEffectMovie extends MazikaruEffect {
 
     /** @type {string} */
     path;
@@ -243,7 +274,8 @@ class MainEffectMovie {
      * @param {int} anim
      * @public
      */
-    constructor(path, anim) {
+    constructor(path, anim = ANIM_FADE) {
+        super();
         this.path = "resource/main_effect/" + path + ".mp4";
         this.anim = anim;
         this.videoElem = document.getElementById("main_effect_mov");
@@ -252,6 +284,7 @@ class MainEffectMovie {
 
     /** @public */
     play() {
+        document.getElementById("back_ground_picture").style.opacity = 0.35;
         console.log("現在 " + currentMainEffectClassId + " 番目のメインエフェクトを表示中");
         this.videoElem.src = this.path;
         this.videoElem.load();
@@ -280,7 +313,7 @@ class MainEffectMovie {
 
 }
 
-class MainEffectVoid {
+class MainEffectVoid extends MazikaruEffect {
 
     /** @type {int} */
     anim;
@@ -298,7 +331,8 @@ class MainEffectVoid {
      * @param {int} anim
      * @public
      */
-    constructor(anim) {
+    constructor(anim = ANIM_FADE) {
+        super();
         this.anim = anim;
         this.videoElem = document.getElementById("main_effect_mov");
         this.classId = getAvailableMainEffectClassId();
@@ -306,6 +340,7 @@ class MainEffectVoid {
 
     /** @public */
     play() {
+        document.getElementById("back_ground_picture").style.opacity = 0.98;
         console.log("現在 " + currentMainEffectClassId + " 番目のメインエフェクトを表示中。これは、空欄です。");
         switch (this.anim) {
             case ANIM_NONE:
@@ -331,7 +366,7 @@ class MainEffectVoid {
 
 }
 
-class BackgroundPicture {
+class BackgroundPicture extends MazikaruEffect {
 
     /** @type {string} */
     path;
@@ -348,12 +383,14 @@ class BackgroundPicture {
     currentTick;
 
     /**
-     * @param {string} path 拡張子が必要です
+     * @param {string} path
      * @param {int} anim
+     * @param {string} extension 拡張子
      * @public
      */
-    constructor(path, anim) {
-        this.path = "resource/picture/" + path; /* constructor引数には拡張子が必要です */
+    constructor(path, anim = ANIM_FADE, extension = "jpg") {
+        super();
+        this.path = "resource/picture/" + path + "." + extension;
         this.anim = anim;
         this.imageElem = document.getElementById("back_ground_picture");
         this.classId = getAvailablePictureClassId();
@@ -385,7 +422,7 @@ class BackgroundPicture {
 
 }
 
-class BackgroundPictureVoid {
+class BackgroundPictureVoid extends MazikaruEffect {
 
     /** @type {int} */
     anim;
@@ -402,7 +439,8 @@ class BackgroundPictureVoid {
      * @param {int} anim
      * @public
      */
-    constructor(anim) {
+    constructor(anim = ANIM_FADE) {
+        super();
         this.anim = anim;
         this.imageElem = document.getElementById("back_ground_picture");
         this.classId = getAvailablePictureClassId();
@@ -433,7 +471,7 @@ class BackgroundPictureVoid {
 
 }
 
-class BackgroundMusic {
+class BackgroundMusic extends MazikaruEffect {
 
     /** @type {string} */
     path;
@@ -454,7 +492,8 @@ class BackgroundMusic {
      * @param {int} anim
      * @public
      */
-    constructor(path, anim) {
+    constructor(path, anim = ANIM_FADE) {
+        super();
         this.path = "resource/music/" + path + ".mp3";
         this.anim = anim;
         this.audioElem = document.getElementById("back_ground_music");
@@ -491,7 +530,7 @@ class BackgroundMusic {
 
 }
 
-class BackgroundMusicVoid {
+class BackgroundMusicVoid extends MazikaruEffect {
 
     /** @type {int} */
     anim;
@@ -508,7 +547,8 @@ class BackgroundMusicVoid {
      * @param {int} anim
      * @public
      */
-    constructor(anim) {
+    constructor(anim = ANIM_FADE) {
+        super();
         this.anim = anim;
         this.audioElem = document.getElementById("back_ground_music");
         this.classId = getAvailableMusicClassId();
@@ -595,7 +635,58 @@ function getAvailableMusicClassId() {
     return ++lastMusicClassId;
 }
 
-/** @return {TextBoxMovie|TextBoxVoid|MainScreenMovie|MainScreenVoid|MainEffectMovie|MainEffectVoid|BackgroundPicture|BackgroundPictureVoid|BackgroundMusic|BackgroundMusicVoid} */
+/**
+ * @param {MazikaruEffect} search
+ * @return {?MazikaruEffect}
+ */
+function getLastEffect(search) {
+    switch (true) {
+        case search instanceof TextBoxMovie || search instanceof TextBoxVoid:
+            for (let i=currentAllClassId - 2; i>=0; i--) {
+                let wrapper = getElementWrapperById(i);
+                if (wrapper instanceof TextBoxMovie || wrapper instanceof TextBoxVoid) {
+                    return wrapper;
+                }
+            }
+            return new TextBoxVoid(ANIM_NONE);
+        case search instanceof MainEffectMovie || search instanceof MainEffectVoid:
+            for (let i=currentAllClassId - 2; i>=0; i--) {
+                let wrapper = getElementWrapperById(i);
+                if (wrapper instanceof MainEffectMovie || wrapper instanceof MainEffectVoid) {
+                    return wrapper;
+                }
+            }
+            return new MainEffectVoid(ANIM_NONE);
+        case search instanceof MainScreenMovie || search instanceof MainScreenVoid:
+            for (let i=currentAllClassId - 2; i>=0; i--) {
+                let wrapper = getElementWrapperById(i);
+                if (wrapper instanceof MainScreenMovie || wrapper instanceof MainScreenVoid) {
+                    return wrapper;
+                }
+            }
+            return new MainScreenVoid(ANIM_NONE);
+        case search instanceof BackgroundPicture || search instanceof BackgroundPictureVoid:
+            for (let i=currentAllClassId - 2; i>=0; i--) {
+                let wrapper = getElementWrapperById(i);
+                if (wrapper instanceof BackgroundPicture || wrapper instanceof BackgroundPictureVoid) {
+                    return wrapper;
+                }
+            }
+            return new BackgroundPictureVoid(ANIM_NONE);
+        case search instanceof BackgroundMusic || search instanceof BackgroundMusicVoid:
+            for (let i=currentAllClassId - 2; i>=0; i--) {
+                let wrapper = getElementWrapperById(i);
+                if (wrapper instanceof BackgroundMusic || wrapper instanceof BackgroundMusicVoid) {
+                    return wrapper;
+                }
+            }
+            return new BackgroundMusicVoid(ANIM_NONE);
+        default:
+            return null;
+    }
+}
+
+/** @return {MazikaruEffect} */
 function getElementWrapperById(id) {
     return EFFECTS[id];
 }
@@ -615,10 +706,11 @@ function createElement(tag, id) {
  * @param {boolean} behind 一つ後ろに戻るかどうか
  */
 function next(behind = false) {
+    console.log(currentAllClassId);
     if (behind && currentAllClassId <= 0) {
         return;
     }
-    const wrapper = getElementWrapperById(currentAllClassId);
+    const wrapper = behind ? getLastEffect(getElementWrapperById(currentAllClassId - 1)) : getElementWrapperById(currentAllClassId);
     if (!behind) {
         switch (true) {
             case wrapper instanceof TextBoxMovie || wrapper instanceof TextBoxVoid:
@@ -669,56 +761,119 @@ function onChangeResource() {
     /** @type {HTMLParagraphElement} */
     const loggerElement = document.getElementById("logger");
     console.assert(loggerElement instanceof HTMLParagraphElement);
-    loggerElement.innerHTML = "<span style='color: #007504'>上部テキスト(Q): <span style='color: #00fd08'>" + currentTextBoxClassId.toString() + "   <span style='color: #959a00'>中央エフェクト(W): <span style='color: #eaf300'>" + currentMainEffectClassId.toString() + "   " +
-        "<span style='color: #55009a'>中央メイン(E): <span style='color: #9900ff'>" + currentMainScreenClassId.toString() + "   <span style='color: #00559a'>中央背景(R): <span style='color: #0087f5'>" + currentPictureClassId.toString() + "   " +
-        "<span style='color: #9a0000'>音響(T): <span style='color: #ff0000'>" + currentMusicClassId.toString();
+    loggerElement.innerHTML = "<span style='color: #007504'>上部テキスト(T): <span style='color: #00fd08'>" + currentTextBoxClassId.toString() + "   <span style='color: #959a00'>中央エフェクト(E): <span style='color: #eaf300'>" + currentMainEffectClassId.toString() + "   " +
+        "<span style='color: #55009a'>中央メイン(M): <span style='color: #9900ff'>" + currentMainScreenClassId.toString() + "   <span style='color: #00559a'>中央背景(B): <span style='color: #0087f5'>" + currentPictureClassId.toString() + "   " +
+        "<span style='color: #9a0000'>音響(S): <span style='color: #ff0000'>" + currentMusicClassId.toString();
 }
 
-/** @type {(TextBoxMovie|TextBoxVoid|MainScreenMovie|MainScreenVoid|MainEffectMovie|MainEffectVoid|BackgroundPicture|BackgroundPictureVoid|BackgroundMusic|BackgroundMusicVoid)[]} */
+/** @type {MazikaruEffect[]} */
 let EFFECTS = [];
 
 window.addEventListener("load", function () {
     EFFECTS = [
+
         new TextBoxVoid(ANIM_NONE),
-        new MainEffectVoid(ANIM_NONE),
-        new MainScreenVoid(ANIM_NONE),
-        new BackgroundPictureVoid(ANIM_NONE),
-        new BackgroundMusicVoid(ANIM_NONE),
-        new TextBoxMovie("まじくまじから", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("ずざら", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("たくたから", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("けむけむ", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("天帝我をして", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("一を聞いて", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("覆水盆に", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("らむらむ", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("禍を転じて", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("まじくまじから", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("られられ", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("石に漱ぎ", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("まほしくまほしから", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("ましかませ", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("ましか予告", ANIM_FADE),
+            new MainEffectVoid(ANIM_NONE),
+                new MainScreenVoid(ANIM_NONE),
+                    new BackgroundPictureVoid(ANIM_NONE),
+                        new BackgroundMusicVoid(ANIM_NONE),
+
+                    new BackgroundPicture("kousya_heiwa_half"),
+                new MainScreenMovie("light_leak_half"),
+                new MainScreenVoid(),
+                    new BackgroundPicture("kousya_heiwa", ANIM_NONE),
+        new TextBoxMovie("まじくまじから"),
+            new MainEffectMovie("hikari_ue"),
+            new MainEffectVoid(),
+        new TextBoxVoid(),
+                new MainScreenMovie("light_leak"),
+        new TextBoxMovie("ずざら"),
+                new MainScreenVoid(),
+        new TextBoxVoid(),
+        new TextBoxMovie("たくたから"),
+            new MainEffectMovie("mazikaru_kougeki"),
+            new MainEffectVoid(),
+        new TextBoxVoid(),
+                    new BackgroundPicture("kousya_heiwa_half", ANIM_NONE),
+                    new BackgroundPictureVoid(),
+                new MainScreenMovie("konan", ANIM_NONE),
+                new MainScreenVoid(),
+                    new BackgroundPicture("kousya_heiwa_half"),
+                    new BackgroundPictureVoid(),
+
+                    new BackgroundPicture("kyoushitsu_heiwa_half"),
+                new MainScreenMovie("light_leak_half"),
+                    new BackgroundPicture("kyoushitsu_heiwa", ANIM_NONE),
+                new MainScreenMovie("light_leak"),
+                new MainScreenVoid(),
+        new TextBoxMovie("けむけむ"),
+            new MainEffectMovie("tokei"),
+            new MainEffectVoid(),
+        new TextBoxVoid(),
+                    new BackgroundPictureVoid(),
+                new MainScreenMovie("warp_to"),
+
+                new MainScreenVoid(),
+                    new BackgroundPicture("kousya_old_half"),
+                new MainScreenMovie("light_leak_half"),
+                new MainScreenVoid(),
+                    new BackgroundPicture("kousya_old", ANIM_NONE),
+        new TextBoxMovie("天帝我をして"),
+            new MainEffectMovie("hikari_ue"),
+            new MainEffectVoid(),
+        new TextBoxVoid(),
+        new TextBoxMovie("一を聞いて"),
+            new MainEffectMovie("mazikaru_kougeki"),
+            new MainEffectVoid(),
+        new TextBoxVoid(),
+                    new BackgroundPicture("kousya_old_half", ANIM_NONE),
+                    new BackgroundPictureVoid(),
+
+                    new BackgroundPicture("kyoushitsu_old_half"),
+                new MainScreenMovie("light_leak_half"),
+            new MainEffectMovie("burabo_half"),
+            new MainEffectVoid(),
+                new MainScreenVoid(),
+                    new BackgroundPicture("kyoushitsu_old", ANIM_NONE),
+            new MainEffectMovie("burabo2"),
+            new MainEffectVoid(),
+        new TextBoxMovie("覆水盆に"),
+            new MainEffectMovie("mazikaru_kougeki"),
+            new MainEffectVoid(),
+        new TextBoxVoid(),
+        new TextBoxMovie("らむらむ"),
+            new MainEffectMovie("tokei"),
+            new MainEffectVoid(),
+        new TextBoxVoid(),
+                    new BackgroundPictureVoid(),
+                new MainScreenMovie("warp_back"),
+        new TextBoxMovie("いおかると共に", ANIM_NONE),
+                new MainScreenVoid(),
+        new TextBoxMovie("禍を転じて"),
+        new TextBoxVoid(),
+        new TextBoxMovie("まじくまじから"),
+        new TextBoxVoid(),
+                        new BackgroundMusic("fight-again-cut"),
+        new TextBoxMovie("られられ"),
+        new TextBoxVoid(),
+                        new BackgroundMusicVoid(),
+                        new BackgroundMusic("orchestral_mission"),
+        new TextBoxMovie("石に漱ぎ"),
+        new TextBoxVoid(),
+                        new BackgroundMusicVoid(),
+        new TextBoxMovie("まほしくまほしから"),
+        new TextBoxVoid(),
+        new TextBoxMovie("ましかませ"),
+        new TextBoxVoid(),
+        new TextBoxMovie("ましか予告"),
         new TextBoxMovie("ましかませ", ANIM_NONE),
         new TextBoxMovie("ましか予告", ANIM_NONE),
         new TextBoxMovie("ましかませ", ANIM_NONE),
-        new TextBoxVoid(ANIM_FADE),
-        new TextBoxMovie("けむけむ", ANIM_FADE),
-        new TextBoxVoid(ANIM_FADE),
+        new TextBoxVoid(),
+        new TextBoxMovie("けむけむ"),
+        new TextBoxVoid(),
+                new MainScreenMovie("dance"),
+                new MainScreenVoid()
     ];
     window.addEventListener("keydown", function(event) {
         switch (event.key) {
@@ -749,7 +904,7 @@ window.addEventListener("load", function () {
     });
     window.addEventListener("click", function(event) {
         event.preventDefault();
-        next(false);
+        next(true);
     })
     document.body.addEventListener("contextmenu", function(event) {
         event.preventDefault();
