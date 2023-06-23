@@ -25,7 +25,9 @@
     width: 100vw;
     margin: 0;
     padding: 0;
-    position: fixed;
+    position: absolute;
+    top: 0;
+    left: 0;
     z-index: 4;
 }
 #main_screen {
@@ -105,5 +107,37 @@
     margin: 0;
     padding: 0;
     color: #ffffff;
+}
+.scrollable {
+    overflow: hidden;
+}
+#text_box_lines_div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100vw;
+    background-color: #0a0a0a;
+    padding: 2vw 0 2vw;
+    margin: 0;
+    height: 4vw;
+    z-index: 3;
+    display: inline-flex;
+}
+#text_box_lines_div div {
+    overflow: hidden;
+}
+#text_box_lines_div p {
+    position: relative;
+    display: block;
+    padding: 0;
+    margin: 0;
+    bottom: 2vw;
+    height: 4vw;
+    color: white;
+    line-height: 8vw;
+    font-size: 3vw;
+    font-family: "源ノ角ゴシック Heavy", serif;
 }
 
